@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<file job input file="OPUS Project">
+  <ACTION>SessionProcessing</ACTION>
+  <CORS INCLUDED>
+    <CORS>
+      <FIX>3-D</FIX>
+  </CORS>
+  </CORS INCLUDED>
+  <BASELINES>
+    <BASELINE>
+      <FROM>Joe</FROM>
+      <TO>Bob</TO>
+    </BASELINE>
+  </BASELINES>
+</file>
