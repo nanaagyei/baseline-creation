@@ -11,7 +11,7 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage
 import pandas as pd
 
-from single_hub import create_map, create_default_map
+from single_hub import create_map, create_default_map, populate_xml_file
 from five_hubs import create_map, create_default_map
 import fileloader as fl
 import importlib
@@ -137,6 +137,9 @@ class MainWindow(QMainWindow):
 
         # Connect the run function to the clicked signal of the run button
         self.run_button.clicked.connect(self.run)
+
+        # connect the reset function to the clicked signal of the reset button
+        self.reset_button.clicked.connect(self.reset)
 
         # START ADDING INPUT INFO TO LEFT FRAME (WHERE THE INPUTS ARE REQUIRED)
         # Create a tab widget for the left frame
@@ -607,7 +610,7 @@ class MainWindow(QMainWindow):
             self, "Save File", "", "", options=options)
         if file_name:
             # Do something with the selected file
-            pass
+            populate_xml_file(file_name)
 
     # def run(self):
     #     print("test")
@@ -647,6 +650,12 @@ class MainWindow(QMainWindow):
 
         # Update the view with the map
         self.view.setHtml(map._repr_html_())
+
+    def reset(self):
+        self.network_design_checkbox1.setChecked(False)
+        self.network_design_checkbox2.setChecked(False)
+        self.view.setHtml("")
+        create_default_map()
 
     # def run(self):
     #     print("test")
