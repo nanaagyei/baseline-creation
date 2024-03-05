@@ -654,8 +654,8 @@ class MainWindow(QMainWindow):
     def reset(self):
         self.network_design_checkbox1.setChecked(False)
         self.network_design_checkbox2.setChecked(False)
-        self.view.setHtml("")
-        create_default_map()
+        default_map = create_default_map()
+        self.view.setHtml(default_map._repr_html_())
 
     # def run(self):
     #     print("test")
