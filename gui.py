@@ -20,6 +20,13 @@ import importlib
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        selected_geoid_text = ""
+        on_combo_box_text = ""
+        selected_elevation_cutoff_text = ""
+        selected_reference_frame_text = ""
+        selected_gnss_text = ""
+        selected_tropo_interval_text = ""
+        selected_tropo_model_text = ""
         self.setWindowTitle("OPUS PROJECTS RTN BASELINE GENERATOR (Beta)")
         self.setWindowIcon(QIcon("testlogo.png"))
 
@@ -320,13 +327,25 @@ class MainWindow(QMainWindow):
         combo_tab2_box1.addItem("Tight")
         combo_tab2_box1.addItem("Loose")
 
+        def handle_on_combo_box_activated(self):
+            global on_combo_box_text
+            on_combo_box_text = fl.on_combo_box_activated(
+                combo_tab2_box1, combo_tab2_box1.currentIndex())
+
         # Connect the combo box's activated signal to a slot
-        combo_tab2_box1.activated.connect(lambda: fl.on_combo_box_activated(
-            combo_tab2_box1, combo_tab2_box1.currentIndex()))
+        combo_tab2_box1.activated.connect(handle_on_combo_box_activated)
 
         # elevation cutoff
         combo_tab2_box2.addItem("10.0")
         combo_tab2_box2.addItem("15.0")
+
+        def handle_elevation_cutoff_activated(self):
+            global selected_elevation_cutoff_text
+            selected_elevation_cutoff_text = fl.elevation_cutoff_activated(
+                combo_tab2_box2, combo_tab2_box2.currentIndex())
+
+        # Connect the combo box's activated signal to a slot
+        combo_tab2_box2.activated.connect(handle_elevation_cutoff_activated)
 
     # Geiod Model
         # Add options to the combo boxes
@@ -340,9 +359,13 @@ class MainWindow(QMainWindow):
         combo_tab2_box3.addItem("USGG2012")
         combo_tab2_box3.addItem("USGG2009")
 
+        def handle_geoid_combo_box_activation(self):
+            global selected_geoid_text
+            selected_geoid_text = fl.geoid_combo_box_activated(
+                combo_tab2_box3, combo_tab2_box3.currentIndex())
+
         # Connect the combo box's activated signal to a slot
-        combo_tab2_box3.activated.connect(lambda: fl.geoid_combo_box_activated(
-            combo_tab2_box3, combo_tab2_box3.currentIndex()))
+        combo_tab2_box3.activated.connect(handle_geoid_combo_box_activation)
 
     # Reference Frame
         combo_tab2_box4.addItem("LET OPUS CHOOSE")
@@ -351,15 +374,46 @@ class MainWindow(QMainWindow):
         combo_tab2_box4.addItem("IGS14")
         combo_tab2_box4.addItem("WGS84")
 
+        def reference_frame_combo_box_activation(self):
+            global selected_reference_frame_text
+            selected_reference_frame_text = fl.reference_frame_combo_box_activated(
+                combo_tab2_box4, combo_tab2_box4.currentIndex())
+
+        # Connect the combo box's activated signal to a slot
+        combo_tab2_box4.activated.connect(reference_frame_combo_box_activation)
+
     # GNSS
         combo_tab2_box5.addItem("G (GPS- only) ")
+        combo_tab2_box5.addItem("GNSS")
+
+        def gnss_combo_box_activation(self):
+            global selected_gnss_text
+            selected_gnss_text = fl.gnss_combo_box_activated(
+                combo_tab2_box5, combo_tab2_box5.currentIndex())
+
+        # Connect the combo box's activated signal to a slot
+        combo_tab2_box5.activated.connect(gnss_combo_box_activation)
 
     # Tropo Interval
         combo_tab2_box6.addItem("7200")
 
+        def tropo_interval_combo_box_activation(self):
+            global selected_tropo_interval_text
+            selected_tropo_interval_text = fl.tropo_interval_combo_box_activated(
+                combo_tab2_box6, combo_tab2_box6.currentIndex())
+
+        combo_tab2_box6.activated.connect(tropo_interval_combo_box_activation)
+
     # Tropo Model
         combo_tab2_box7.addItem("Step-Offset")
         combo_tab2_box7.addItem("Piecewise Linear")
+
+        def tropo_model_combo_box_activation(self):
+            global selected_tropo_model_text
+            selected_tropo_model_text = fl.tropo_model_combo_box_activated(
+                combo_tab2_box7, combo_tab2_box7.currentIndex())
+
+        combo_tab2_box7.activated.connect(tropo_model_combo_box_activation)
 
     # Disable the option for the user to enter their own value
         combo_tab2_box1.setEditable(False)
@@ -610,7 +664,8 @@ class MainWindow(QMainWindow):
             self, "Save File", "", "", options=options)
         if file_name:
             # Do something with the selected file
-            populate_xml_file(file_name)
+            populate_xml_file(file_name, on_combo_box_text, selected_elevation_cutoff_text, selected_geoid_text,
+                              selected_reference_frame_text, selected_gnss_text, selected_tropo_interval_text, selected_tropo_model_text)
 
     # def run(self):
     #     print("test")

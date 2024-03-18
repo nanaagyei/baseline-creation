@@ -182,7 +182,7 @@ print(geoid_df)
 # %%
 # POPULATE OPUS PROJECT JOB INPUT FILE
 
-def populate_xml_file(file_name):
+def populate_xml_file(file_name, constraint_weight_text, element_cutoff_text, geoid_model_text, reference_frame_text, gnss_text, tropo_interval_text, tropo_model_text):
 
     # create root element
     root = ET.Element('OPTIONS')
@@ -207,11 +207,11 @@ def populate_xml_file(file_name):
     constraint_weight = ET.SubElement(root, 'CONSTRAINT_WEIGHT')
 
     # Set the text of the subelement to the string from the dataframe
-    constraint_weight.text = string_value
+    constraint_weight.text = constraint_weight_text
 
     # create ELEVATION_CUTOFF element
     elevation_cutoff = ET.SubElement(root, 'ELEVATION_CUTOFF')
-    elevation_cutoff.text = '15.0'
+    elevation_cutoff.text = element_cutoff_text
 
     # create EMAIL_ADDRESS element
     email_address = ET.SubElement(root, 'EMAIL_ADDRESS')
@@ -219,23 +219,23 @@ def populate_xml_file(file_name):
 
     # create GEOID_MODEL element
     geoid_model = ET.SubElement(root, 'GEOID_MODEL')
-    geoid_model.text = 'LET OPUS CHOOSE'
+    geoid_model.text = geoid_model_text
 
     # create REFERENCE_FRAME element
     reference_frame = ET.SubElement(root, 'REFERENCE_FRAME')
-    reference_frame.text = 'LET OPUS CHOOSE'
+    reference_frame.text = reference_frame_text
 
     # create GNSS element
     gnss = ET.SubElement(root, 'GNSS')
-    gnss.text = 'GPS-Only'
+    gnss.text = gnss_text
 
     # create TROPO_INTERVAL element
     tropo_interval = ET.SubElement(root, 'TROPO_INTERVAL')
-    tropo_interval.text = '7200'
+    tropo_interval.text = tropo_interval_text
 
     # create TROPO_MODEL element
     tropo_model = ET.SubElement(root, 'TROPO_MODEL')
-    tropo_model.text = 'Piecewise Linear'
+    tropo_model.text = tropo_model_text
 
     # ________________________________________________________
     # create CORS element
