@@ -182,7 +182,7 @@ print(geoid_df)
 # %%
 # POPULATE OPUS PROJECT JOB INPUT FILE
 
-def populate_xml_file(file_name, constraint_weight_text, element_cutoff_text, geoid_model_text, reference_frame_text, gnss_text, tropo_interval_text, tropo_model_text):
+def populate_xml_file(file_name, constraint_weight_text, element_cutoff_text, email, geoid_model_text, reference_frame_text, gnss_text, tropo_interval_text, tropo_model_text):
 
     # create root element
     root = ET.Element('OPTIONS')
@@ -215,7 +215,7 @@ def populate_xml_file(file_name, constraint_weight_text, element_cutoff_text, ge
 
     # create EMAIL_ADDRESS element
     email_address = ET.SubElement(root, 'EMAIL_ADDRESS')
-    email_address.text = 'ohenew@oregonstate.edu'
+    email_address.text = email
 
     # create GEOID_MODEL element
     geoid_model = ET.SubElement(root, 'GEOID_MODEL')

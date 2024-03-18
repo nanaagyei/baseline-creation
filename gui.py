@@ -5,7 +5,7 @@ import subprocess
 import sys
 from PySide6.QtWidgets import QApplication, QButtonGroup, QGroupBox, QRadioButton, QMainWindow, QTabWidget, QLabel, QComboBox, QPushButton, QVBoxLayout, QMenuBar, QMenu, QFileDialog, QHBoxLayout, QTabBar, QFrame, QWidget
 from PySide6.QtGui import QAction, QFontMetrics, QIcon
-from PySide6.QtWidgets import QSplitter, QCheckBox, QLineEdit, QTextEdit
+from PySide6.QtWidgets import QSplitter, QCheckBox, QLineEdit, QTextEdit, QInputDialog
 from PySide6.QtCore import Qt
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage
@@ -20,13 +20,6 @@ import importlib
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        selected_geoid_text = ""
-        on_combo_box_text = ""
-        selected_elevation_cutoff_text = ""
-        selected_reference_frame_text = ""
-        selected_gnss_text = ""
-        selected_tropo_interval_text = ""
-        selected_tropo_model_text = ""
         self.setWindowTitle("OPUS PROJECTS RTN BASELINE GENERATOR (Beta)")
         self.setWindowIcon(QIcon("testlogo.png"))
 
@@ -664,7 +657,7 @@ class MainWindow(QMainWindow):
             self, "Save File", "", "", options=options)
         if file_name:
             # Do something with the selected file
-            populate_xml_file(file_name, on_combo_box_text, selected_elevation_cutoff_text, selected_geoid_text,
+            populate_xml_file(file_name, on_combo_box_text, selected_elevation_cutoff_text, email, selected_geoid_text,
                               selected_reference_frame_text, selected_gnss_text, selected_tropo_interval_text, selected_tropo_model_text)
 
     # def run(self):
@@ -684,6 +677,7 @@ class MainWindow(QMainWindow):
     #     self.view.setHtml(map._repr_html_())
 
     def run(self):
+        global email
         print("test")
         # Check which checkbox is selected
         if self.network_design_checkbox1.isChecked():
@@ -702,6 +696,14 @@ class MainWindow(QMainWindow):
             create_map = module.create_map
             # Create the map with markers and lines
             map = create_map()
+
+        # Show a pop-up window asking the user to enter their email address
+        input_email, ok = QInputDialog.getText(
+            None, 'Email Address', "Please enter your email address:")
+        if ok and input_email:
+            # Do something with the email address (e.g. send it to a server)
+            print("Email address:", input_email)
+            email = input_email
 
         # Update the view with the map
         self.view.setHtml(map._repr_html_())
