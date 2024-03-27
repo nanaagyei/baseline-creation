@@ -172,11 +172,11 @@ def get_database_data(database_file):
 
 # Get the data from the on_combo_box_database.db database
 constraint_weight_df = get_database_data("on_combo_box_database.db")
-print(constraint_weight_df)
+# print(constraint_weight_df)
 
 # Get the data from the geoid_combo_box_database.db database
 geoid_df = get_database_data("geoid_combo_box_database.db")
-print(geoid_df)
+# print(geoid_df)
 
 
 # %%
@@ -281,17 +281,17 @@ def populate_xml_file(file_name, constraint_weight_text, element_cutoff_text, em
 # %%
 # map display dataframes
 # helps create baselines
-print(site_code_dict)
+# print(site_code_dict)
 map_baseline_df = pd.DataFrame.from_dict(
     site_code_dict, orient='index', columns=['Site Code'])
-print(df)
+# print(df)
 # print(map_baseline_df)
 
 map_mask = df['Site Code'].isin(map_baseline_df['Site Code'])
 filtered_map_df = df[map_mask]
 # print(filtered_map_df)
 
-print(selected_single_hub)
+# print(selected_single_hub)
 s_hub_map_df = pd.DataFrame({'Site Code': selected_single_hub}, index=[0])
 # print(s_hub_map_df)
 
