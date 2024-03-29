@@ -1,6 +1,6 @@
 
 # gui design
-
+import os
 import subprocess
 import sys
 from PySide6.QtWidgets import QApplication, QButtonGroup, QGroupBox, QRadioButton, QMainWindow, QTabWidget, QLabel, QComboBox, QPushButton, QVBoxLayout, QMenuBar, QMenu, QFileDialog, QHBoxLayout, QTabBar, QFrame, QWidget
@@ -12,7 +12,7 @@ from PySide6.QtWebEngineCore import QWebEnginePage
 import pandas as pd
 
 from single_hub import create_map, create_default_map, populate_xml_file
-from five_hubs import create_map, create_default_map
+# from five_hubs import create_map, create_default_map
 import fileloader as fl
 import importlib
 
@@ -678,7 +678,6 @@ class MainWindow(QMainWindow):
 
     def run(self):
         global email
-        print("test")
         # Check which checkbox is selected
         if self.network_design_checkbox1.isChecked():
             # Run script A
@@ -690,19 +689,19 @@ class MainWindow(QMainWindow):
             map = create_map()
         elif self.network_design_checkbox2.isChecked():
             # Run script B
-            subprocess.run(["python", "five_hubs.py"])
-            module = importlib.import_module("five_hubs")
-            create_default_map = module.create_default_map
-            create_map = module.create_map
+            # subprocess.run(["python", "five_hubs.py"])
+            # module = importlib.import_module("five_hubs")
+            # create_default_map = module.create_default_map
+            # create_map = module.create_map
             # Create the map with markers and lines
             map = create_map()
 
         # Show a pop-up window asking the user to enter their email address
         input_email, ok = QInputDialog.getText(
-            None, 'Email Address', "Please enter your email address:")
+            None, 'Email Address', "Please enter your email address: ")
         if ok and input_email:
             # Do something with the email address (e.g. send it to a server)
-            print("Email address:", input_email)
+            print("Email address: ", input_email)
             email = input_email
 
         # Update the view with the map
@@ -713,6 +712,9 @@ class MainWindow(QMainWindow):
         self.network_design_checkbox2.setChecked(False)
         default_map = create_default_map()
         self.view.setHtml(default_map._repr_html_())
+
+        if os.path.exists("df.pkl"):
+            os.remove("df.pkl")
 
     # def run(self):
     #     print("test")

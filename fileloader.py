@@ -29,7 +29,7 @@ def load(self):
     else:
         # Return None if no file was selected
         return None
-    return df
+    # return df
 
 
 # The purpose of the code is to handle the activation of a combo box and store the selected index and corresponding string value into a database.

@@ -69,8 +69,15 @@ def remove_hub(value, dict_hub):
 
 
 # Load the df variable from the file
-with open('df.pkl', 'rb') as f:
-    df = pickle.load(f)
+def load_df():
+    global df
+    try:
+        with open('df.pkl', 'rb') as f:
+            df = pickle.load(f)
+    except:
+        pass
+
+    return df
 
 # print(df)
 # win.show()
@@ -87,75 +94,74 @@ with open('df.pkl', 'rb') as f:
 # %%
 # HUB SELECTION
 
-# Output the summary of the distances
-dist_summary = comp_distances(df, "NGS CORS", "Site Code")
-# print(dist_summary)
+def hub_selection():
+    df = load_df()
+    # Output the summary of the distances
+    dist_summary = comp_distances(df, "NGS CORS", "Site Code")
+    # print(dist_summary)
 
-# Output the sorted average of the distances in ascending order(smallest to largest)
-means = get_sorted_means(dist_summary)
-# print("_"*70 + "Average distances" + "_"*70)
-# print(means)
+    # Output the sorted average of the distances in ascending order(smallest to largest)
+    means = get_sorted_means(dist_summary)
+    # print("_"*70 + "Average distances" + "_"*70)
+    # print(means)
 
-# Extract the least of the averaged distance into a variable called selected_single_hub
-selected_single_hub = list(means.keys())[0]
-# print("Suggested Hub is:",selected_single_hub)
-# print(type(selected_single_hub))
+    # Extract the least of the averaged distance into a variable called selected_single_hub
+    selected_single_hub = list(means.keys())[0]
+    # print("Suggested Hub is:",selected_single_hub)
+    # print(type(selected_single_hub))
 
+    # %%
+    #
+    # ##Create a dictionaries to populate xml
 
-# %%
-#
-# ##Create a dictionaries to populate xml
+    # 1 extract site code coulmn from pandas dataframe
+    site_code_df = df["Site Code"]
+    # print(site_code_df)
+    site_code_dict = dict(site_code_df)
+    # print(site_code_dict)
 
-# 1 extract site code coulmn from pandas dataframe
-site_code_df = df["Site Code"]
-# print(site_code_df)
-site_code_dict = dict(site_code_df)
-# print(site_code_dict)
+    # remove the selected hub from the dictionary
+    remove_hub(selected_single_hub, site_code_dict)
 
+    # value_to_remove = selected_single_hub
+    # keys_to_remove = []
 
-# remove the selected hub from the dictionary
-remove_hub(selected_single_hub, site_code_dict)
+    # for key, value in site_code_dict.items():
+    #     if value == value_to_remove:
+    #         keys_to_remove.append(key)
 
-# value_to_remove = selected_single_hub
-# keys_to_remove = []
+    # for one_key in keys_to_remove:
+    #     site_code_dict.pop(one_key)
 
-# for key, value in site_code_dict.items():
-#     if value == value_to_remove:
-#         keys_to_remove.append(key)
+    # print("_"*70 + "new dict" + "_"*70)
+    # print(site_code_dict)
 
-# for one_key in keys_to_remove:
-#     site_code_dict.pop(one_key)
+    # 2 extract CORS from pandas dataframe
+    true_df = df[df["NGS CORS"] == True]
+    # print(true_df)
+    for i in range(len(true_df)):
+        cors_summary = true_df["Site Code"]
+    # print(cors_summary)
+    # print("_"*70 + "old CORS" + "_"*70)
+    cors_dict = cors_summary.to_dict()
 
-# print("_"*70 + "new dict" + "_"*70)
-# print(site_code_dict)
+    # print(cors_dict)
 
+    # remove the selected hub from the dictionary
+    # value_to_remove = selected_single_hub
+    # keys_to_remove = []
 
-# 2 extract CORS from pandas dataframe
-true_df = df[df["NGS CORS"] == True]
-# print(true_df)
-for i in range(len(true_df)):
-    cors_summary = true_df["Site Code"]
-# print(cors_summary)
-# print("_"*70 + "old CORS" + "_"*70)
-cors_dict = cors_summary.to_dict()
+    # for key, value in cors_dict.items():
+    #     if value == value_to_remove:
+    #         keys_to_remove.append(key)
 
-# print(cors_dict)
+    # for one_key in keys_to_remove:
+    #     cors_dict.pop(one_key)
 
-
-# remove the selected hub from the dictionary
-# value_to_remove = selected_single_hub
-# keys_to_remove = []
-
-# for key, value in cors_dict.items():
-#     if value == value_to_remove:
-#         keys_to_remove.append(key)
-
-# for one_key in keys_to_remove:
-#     cors_dict.pop(one_key)
-
-remove_hub(selected_single_hub, cors_dict)
-# print("_"*70 + "new CORS" + "_"*70)
-# print(cors_dict)
+    remove_hub(selected_single_hub, cors_dict)
+    # print("_"*70 + "new CORS" + "_"*70)
+    # print(cors_dict)
+    return (selected_single_hub, site_code_dict, cors_dict)
 
 # %%
 
@@ -171,11 +177,13 @@ def get_database_data(database_file):
 
 
 # Get the data from the on_combo_box_database.db database
-constraint_weight_df = get_database_data("on_combo_box_database.db")
-# print(constraint_weight_df)
+def get_data():
+    constraint_weight_df = get_database_data("on_combo_box_database.db")
+    # print(constraint_weight_df)
 
-# Get the data from the geoid_combo_box_database.db database
-geoid_df = get_database_data("geoid_combo_box_database.db")
+    # Get the data from the geoid_combo_box_database.db database
+    geoid_df = get_database_data("geoid_combo_box_database.db")
+    return constraint_weight_df, geoid_df
 # print(geoid_df)
 
 
@@ -183,6 +191,8 @@ geoid_df = get_database_data("geoid_combo_box_database.db")
 # POPULATE OPUS PROJECT JOB INPUT FILE
 
 def populate_xml_file(file_name, constraint_weight_text, element_cutoff_text, email, geoid_model_text, reference_frame_text, gnss_text, tropo_interval_text, tropo_model_text):
+    selected_single_hub, site_code_dict, cors_dict = hub_selection()
+    constraint_weight_df, geoid_df = get_data()
 
     # create root element
     root = ET.Element('OPTIONS')
@@ -282,21 +292,25 @@ def populate_xml_file(file_name, constraint_weight_text, element_cutoff_text, em
 # map display dataframes
 # helps create baselines
 # print(site_code_dict)
-map_baseline_df = pd.DataFrame.from_dict(
-    site_code_dict, orient='index', columns=['Site Code'])
-# print(df)
-# print(map_baseline_df)
+def display_dataframe():
+    selected_single_hub, site_code_dict, cors_dict = hub_selection()
+    map_baseline_df = pd.DataFrame.from_dict(
+        site_code_dict, orient='index', columns=['Site Code'])
+    # print(df)
+    # print(map_baseline_df)
 
-map_mask = df['Site Code'].isin(map_baseline_df['Site Code'])
-filtered_map_df = df[map_mask]
-# print(filtered_map_df)
+    map_mask = df['Site Code'].isin(map_baseline_df['Site Code'])
+    filtered_map_df = df[map_mask]
+    # print(filtered_map_df)
 
-# print(selected_single_hub)
-s_hub_map_df = pd.DataFrame({'Site Code': selected_single_hub}, index=[0])
-# print(s_hub_map_df)
+    # print(selected_single_hub)
+    s_hub_map_df = pd.DataFrame({'Site Code': selected_single_hub}, index=[0])
+    # print(s_hub_map_df)
 
-map_hub_mask = df['Site Code'].isin(s_hub_map_df['Site Code'])
-filtered_s_hub_map_df = df[map_hub_mask]
+    map_hub_mask = df['Site Code'].isin(s_hub_map_df['Site Code'])
+    filtered_s_hub_map_df = df[map_hub_mask]
+
+    return filtered_map_df, filtered_s_hub_map_df
 # print(filtered_s_hub_map_df)
 
 # %%
@@ -319,6 +333,7 @@ def create_default_map():
 
 
 def create_map():
+    filtered_map_df, filtered_s_hub_map_df = display_dataframe()
     # Select all rows with True in the NGS CORS column
     df_hubs = df.loc[df['NGS CORS'] == True]
 
