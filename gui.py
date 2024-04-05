@@ -171,27 +171,27 @@ class MainWindow(QMainWindow):
         # Create  labels
         network_design_label1 = QLabel(
             "Constrains a Single Hub in the network:")
-        network_design_label2 = QLabel("Constrains 5 Hubs in the network:")
+        # network_design_label2 = QLabel("Constrains 5 Hubs in the network:")
         network_design_label3 = QLabel("Constrains all Hubs in the network:")
         network_design_label4 = QLabel("Customise your network:")
 
         # Create Check boxes
         self.network_design_checkbox1 = QCheckBox("Single Hub Network")
-        self.network_design_checkbox2 = QCheckBox("5-Hubs Network")
+        # self.network_design_checkbox2 = QCheckBox("5-Hubs Network")
         self.network_design_checkbox3 = QCheckBox("All-Hubs Network")
         self.network_design_checkbox4 = QCheckBox("Custom Network")
 
         # Add the check boxes to the group box
         group_box.setLayout(QVBoxLayout())
         group_box.layout().addWidget(self.network_design_checkbox1)
-        group_box.layout().addWidget(self.network_design_checkbox2)
+        # group_box.layout().addWidget(self.network_design_checkbox2)
         group_box.layout().addWidget(self.network_design_checkbox3)
         group_box.layout().addWidget(self.network_design_checkbox4)
 
         # Create a button group and add the radio buttons to it
         button_group = QButtonGroup()
         button_group.addButton(self.network_design_checkbox1)
-        button_group.addButton(self.network_design_checkbox2)
+        # button_group.addButton(self.network_design_checkbox2)
         button_group.addButton(self.network_design_checkbox3)
         button_group.addButton(self.network_design_checkbox4)
 
@@ -211,8 +211,8 @@ class MainWindow(QMainWindow):
         group_box.setLayout(QVBoxLayout())
         group_box.layout().addWidget(network_design_label1)
         group_box.layout().addWidget(self.network_design_checkbox1)
-        group_box.layout().addWidget(network_design_label2)
-        group_box.layout().addWidget(self.network_design_checkbox2)
+        # group_box.layout().addWidget(network_design_label2)
+        # group_box.layout().addWidget(self.network_design_checkbox2)
         group_box.layout().addWidget(network_design_label3)
         group_box.layout().addWidget(self.network_design_checkbox3)
         group_box.layout().addWidget(network_design_label4)
@@ -687,13 +687,19 @@ class MainWindow(QMainWindow):
             create_map = module.create_map
             # Create the map with markers and lines
             map = create_map()
-        elif self.network_design_checkbox2.isChecked():
+        elif self.network_design_checkbox3.isChecked():
             # Run script B
             # subprocess.run(["python", "five_hubs.py"])
             # module = importlib.import_module("five_hubs")
             # create_default_map = module.create_default_map
             # create_map = module.create_map
             # Create the map with markers and lines
+            map = create_map()
+        elif self.network_design_checkbox4.isChecked():
+            subprocess.run(["python", "custom_hubs.py"])
+            module = importlib.import_module("custom_hubs")
+            create_default_map = module.create_default_map
+            create_map = module.create_map
             map = create_map()
 
         # Show a pop-up window asking the user to enter their email address
@@ -770,7 +776,8 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         # Update the view with the default map
-        self.view.setHtml(self.default_map._repr_html_())
+        default_map = create_default_map()
+        self.view.setHtml(default_map._repr_html_())
 
 
 if __name__ == "__main__":
