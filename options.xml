@@ -405,18 +405,6 @@
         <FROM>NWBG</FROM>
         <TO>P063</TO>
       </DISTANCE>
-      <DISTANCE>
-        <FROM>P063</FROM>
-        <TO>P381</TO>
-      </DISTANCE>
-      <DISTANCE>
-        <FROM>NWBG</FROM>
-        <TO>RSBG</TO>
-      </DISTANCE>
-      <DISTANCE>
-        <FROM>P063</FROM>
-        <TO>P394</TO>
-      </DISTANCE>
     </BASELINES>
     <CORS>
       <HUB>

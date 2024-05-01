@@ -13,6 +13,7 @@ import pandas as pd
 
 from single_hub import create_map, create_default_map, populate_xml_file
 # from five_hubs import create_map, create_default_map
+import custom_hubs
 import fileloader as fl
 import importlib
 
@@ -240,11 +241,26 @@ class MainWindow(QMainWindow):
         # Add options to the combo boxes
         combo_box1.insertItem(0, "Select a number or enter a custom value")
         combo_box2.insertItem(0, "Select a number or enter a custom value")
-        for i in range(1, 5):
+        for i in range(1, 6):
             combo_box1.addItem(str(i))
             combo_box2.addItem(str(i))
-        combo_box1.addItem("Enter number")
-        combo_box2.addItem("Enter number")
+        # combo_box1.addItem("Enter number")
+        # combo_box2.addItem("Enter number")
+
+        def handle_combo_box1(self):
+            global select_cluster
+            for i in range(1, 6):
+                if i == combo_box1.currentIndex():
+                    select_cluster = i
+
+        def handle_combo_box2(self):
+            global select_hub
+            for i in range(1, 6):
+                if i == combo_box2.currentIndex():
+                    select_hub = i
+
+        combo_box1.activated.connect(handle_combo_box1)
+        combo_box2.activated.connect(handle_combo_box2)
 
         # Allow the user to input a custom value
         combo_box1.setEditable(True)
@@ -656,9 +672,15 @@ class MainWindow(QMainWindow):
         file_name, _ = QFileDialog.getSaveFileName(
             self, "Save File", "", "", options=options)
         if file_name:
-            # Do something with the selected file
-            populate_xml_file(file_name, on_combo_box_text, selected_elevation_cutoff_text, email, selected_geoid_text,
-                              selected_reference_frame_text, selected_gnss_text, selected_tropo_interval_text, selected_tropo_model_text)
+            if self.network_design_checkbox1.isChecked():
+                # Do something with the selected file
+                populate_xml_file(file_name, on_combo_box_text, selected_elevation_cutoff_text, email, selected_geoid_text,
+                                  selected_reference_frame_text, selected_gnss_text, selected_tropo_interval_text, selected_tropo_model_text)
+            elif self.network_design_checkbox4.isChecked():
+                site_code_dictionaries, selected_hubs, hub_baselines_df, cors_dict, df_clusters = custom_hubs.load_custom_hub(
+                    select_cluster, select_hub)
+                custom_hubs.populate_xml(
+                    site_code_dictionaries, selected_hubs, hub_baselines_df, cors_dict)
 
     # def run(self):
     #     print("test")
@@ -681,10 +703,10 @@ class MainWindow(QMainWindow):
         # Check which checkbox is selected
         if self.network_design_checkbox1.isChecked():
             # Run script A
-            subprocess.run(["python", "single_hub.py"])
-            module = importlib.import_module("single_hub")
-            create_default_map = module.create_default_map
-            create_map = module.create_map
+            # subprocess.run(["python", "single_hub.py"])
+            # module = importlib.import_module("single_hub")
+            # create_default_map = module.create_default_map
+            # create_map = module.create_map
             # Create the map with markers and lines
             map = create_map()
         elif self.network_design_checkbox3.isChecked():
@@ -696,11 +718,14 @@ class MainWindow(QMainWindow):
             # Create the map with markers and lines
             map = create_map()
         elif self.network_design_checkbox4.isChecked():
-            subprocess.run(["python", "custom_hubs.py"])
-            module = importlib.import_module("custom_hubs")
-            create_default_map = module.create_default_map
-            create_map = module.create_map
-            map = create_map()
+            site_code_dictionaries, selected_hubs, hub_baselines_df, cors_dict, df_clusters = custom_hubs.load_custom_hub(
+                select_cluster, select_hub)
+            # subprocess.run(["python", "custom_hubs.py"])
+            # module = importlib.import_module("custom_hubs")
+            create_default_map = custom_hubs.create_default_map()
+            # create_map = module.create_map
+            map = custom_hubs.create_map(site_code_dictionaries,
+                                         hub_baselines_df, df_clusters)
 
         # Show a pop-up window asking the user to enter their email address
         input_email, ok = QInputDialog.getText(
@@ -715,7 +740,7 @@ class MainWindow(QMainWindow):
 
     def reset(self):
         self.network_design_checkbox1.setChecked(False)
-        self.network_design_checkbox2.setChecked(False)
+        self.network_design_checkbox3.setChecked(False)
         default_map = create_default_map()
         self.view.setHtml(default_map._repr_html_())
 
